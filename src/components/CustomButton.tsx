@@ -59,7 +59,7 @@ const CustomButton = (props) => {
     >
       <Animated.View
         style={[
-          styles.buttonLight,
+          styles.buttonField,
           {
             backgroundColor,
             // Apply scaling transform
@@ -67,7 +67,7 @@ const CustomButton = (props) => {
           },
         ]}
       >
-        <Animated.Text style={[styles.buttonLightText, { color: getTextCol() }]}>
+        <Animated.Text style={[styles.buttonText, { color: getTextCol() }]}>
           {props.children}
         </Animated.Text>
       </Animated.View>
@@ -76,28 +76,18 @@ const CustomButton = (props) => {
 };
 
 const styles = StyleSheet.create({
-  buttonLight: {
-    paddingVertical: 7,
+  buttonField: {
+    marginVertical: 20,
+    paddingVertical: 10,
     paddingHorizontal: 60,
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonLightText: {
+  buttonText: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  buttonDark: {
-    paddingVertical: 7,
-    paddingHorizontal: 60,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonDarkText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
+  }
 });
 
 export default CustomButton;
