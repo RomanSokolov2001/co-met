@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TextInput } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,17 +7,34 @@ import CustomButton from '../../components/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import { shapes } from '../../utils/shapes';
 import { loadStatusBar } from '../../utils/utilFunctions';
+import { destinations, RegistrationScreenNavigationProp } from '../../types/navigation';
 
 
 const theme = useTheme()
 
 
 export default function AskPersonalInfoScreen() {
-    const navigation = useNavigation()
+    const navigation:any = useNavigation()
+    const [location, setLocation] = useState('');
+    const [occupation, setOccupation] = useState('');
+    const [fieldOfWork, setFieldOfWork] = useState('');
+    const [workplace, setWorkplace] = useState('');
 
     useFocusEffect(() => {
         loadStatusBar(theme.cocao)
     })
+    const dest: string = destinations.postRegistration.regStepOne.name
+
+    const handleContinue = () => {
+        navigation.navigate('RegStepTwo', {
+            personalInfo: {
+                location,
+                occupation,
+                fieldOfWork,
+                workplace
+            }
+        });
+    };
 
 
     return (
@@ -41,6 +58,8 @@ export default function AskPersonalInfoScreen() {
                     <TextInput
                         placeholder='University student, part-time job, etc.'
                         placeholderTextColor={'#8a8988'}
+                        value={occupation}
+                        onChangeText={setOccupation}
                     />
                 </View>
 
@@ -51,6 +70,8 @@ export default function AskPersonalInfoScreen() {
                     <TextInput
                         placeholder='Psychology, management, etc.'
                         placeholderTextColor={'#8a8988'}
+                        value={fieldOfWork}
+                        onChangeText={setFieldOfWork}
                     />
                 </View>
 
@@ -61,10 +82,12 @@ export default function AskPersonalInfoScreen() {
                     <TextInput
                         placeholder='University, company, etc.'
                         placeholderTextColor={'#8a8988'}
+                        value={workplace}
+                        onChangeText={setWorkplace}
                     />
                 </View>
 
-                <CustomButton onPress={() => navigation.navigate('RegStepTwo')}>
+                <CustomButton onPress={handleContinue} type='dark'>
                     <Text>Continue</Text>
                 </CustomButton>
             </View>

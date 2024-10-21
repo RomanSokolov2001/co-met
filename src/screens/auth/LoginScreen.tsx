@@ -11,6 +11,8 @@ import { icons } from '../../utils/icons';
 import { emailRegex, passwordRegex } from '../../utils/utilData';
 import ErrorMessage from '../../components/ErrorMessage';
 import ErrorToast from '../../components/toasts/ErrorToast';
+import { loginUser } from '../../services/AuthService';
+import { destinations } from '../../types/navigation';
 
 
 const theme = useTheme()
@@ -20,12 +22,13 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
 
+    const [loading, setLoading] = useState(false)
     const [showErrorToast, setShowErrorToast] = useState(false)
     const [inputErrorText, setInputErrorText] = useState('')
-    const [serverErrorText, setServerErrorText] = useState('')
+    const [serverErrorText, setServerErrorText] = useState<string | undefined>('')
     const [trigger, setTrigger] = useState(0)
 
-    const navigation = useNavigation()
+    const navigation: any = useNavigation()
 
 
     useFocusEffect(() => {
@@ -36,15 +39,14 @@ export default function LoginScreen() {
     })
 
     // Used CHAT GPT to use 2 IF instead of 5
-    function tryLogin() {
-        if (!email || !password) return
+    async function tryLogin() {
+        if (!email || !password) return;
 
         const emailFine = emailRegex.test(email);
         const passFine = passwordRegex.test(password);
 
         if (!emailFine || !passFine) {
             setTrigger(trigger + 1);
-
             setInputErrorText(
                 !emailFine && !passFine
                     ? 'Invalid email and password'
@@ -52,6 +54,27 @@ export default function LoginScreen() {
                         ? 'Invalid email'
                         : 'Short password'
             );
+            return;
+        }
+
+        // If validation passes, attempt login
+        setLoading(true);
+        try {
+            const result = await loginUser({ email, password });
+
+            if (result.success) {
+                // Navigate to main app screen on successful login
+                navigation.navigate(destinations.main.feeds.name); // Adjust the route name as needed
+            } else {
+                // Show error toast with server error
+                setServerErrorText(result.error);
+                setShowErrorToast(true);
+            }
+        } catch (error) {
+            setServerErrorText('An unexpected error occurred');
+            setShowErrorToast(true);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -100,12 +123,13 @@ export default function LoginScreen() {
                     />
                 </View>
 
-                <CustomButton onPress={tryLogin}>
+                <CustomButton onPress={tryLogin} type={'dark'}>
                     <Text>Log in</Text>
                 </CustomButton>
+
                 <TouchableWithoutFeedback
                     style={styles.noFeedBackButtonField}
-                    onPress={() => navigation.navigate('Signup')}
+                    onPress={() => navigation.navigate(destinations.auth.signup.name)}
                 >
                     <Text style={styles.noFeedBackButtonText}>
                         Create account

@@ -1,39 +1,58 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TextInput } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image, Dimensions, TextInput, Alert } from 'react-native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CustomButton from '../../components/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import { shapes } from '../../utils/shapes';
-import { loadStatusBar } from '../../utils/utilFunctions';
+import { loadStatusBar, pickImage } from '../../utils/utilFunctions';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useAuth } from '../../wrappers/AuthContext';
+import { completeUserProfile } from '../../services/FirestoreService';
+import { destinations } from '../../types/navigation';
 
 
 const theme = useTheme()
 
 
 export default function AskBioAndPhotoScreen() {
-    const navigation = useNavigation()
-    const [imageUri, setImageUri] = useState('')
+    const navigation: any = useNavigation();
+    const [loading, setLoading] = useState(false);
+    const route = useRoute();
+
+    const { user } = useAuth();
+    const [imageUri, setImageUri] = useState('');
+    const [bio, setBio] = useState('');
+    const profileData = route.params;
+
 
     useFocusEffect(() => {
         loadStatusBar(theme.beige)
     })
 
-    function pickImage() {
-        console.log('launch!')
+    const handleCompleteProfile = async () => {
+        if (!user) return;
+        setLoading(true);
 
-        launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
-            if (response.assets && response.assets.length > 0 && response.assets[0].uri) {
-                setImageUri(response.assets[0].uri);
-                console.log('yes!')
-                return
+        try {
+            const result = await completeUserProfile(user.uid, {
+                ...profileData,
+                imageUri,
+                bio
+            });
+
+            if (result.success) {
+                navigation.navigate(destinations.main.feeds.name);
+            } else {
+                Alert.alert('Error', result.error);
             }
-            console.log('ynoes!')
-
-        });
+        } catch (error) {
+            Alert.alert('Error', 'Failed to complete profile');
+        } finally {
+            setLoading(false);
+        }
     };
 
 
@@ -48,7 +67,7 @@ export default function AskBioAndPhotoScreen() {
                     Add a profile picture, so people who they are talking with
                 </Text>
 
-                <TouchableWithoutFeedback onPress={() => pickImage()}>
+                <TouchableWithoutFeedback onPress={() => pickImage(setImageUri)}>
                     <View style={styles.input}>
                         <Text style={styles.placeholder}>
                             Click to upload a picture
@@ -64,7 +83,7 @@ export default function AskBioAndPhotoScreen() {
                         placeholderTextColor={theme.beige}
                     />
                 </View>
-                <CustomButton type={'light'}>
+                <CustomButton type={'light'} onPress={handleCompleteProfile}>
                     <Text>Complete profile</Text>
                 </CustomButton>
             </View>
@@ -109,7 +128,6 @@ const styles = StyleSheet.create({
     pageDescription: {
         fontSize: 28,
         fontFamily: 'KiwiMaru-Medium',
-        alignSelf: 'left',
         textAlign: 'left',
         maxWidth: '85%',
         marginLeft: w / 10,

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CustomButton from '../../components/CustomButton';
@@ -8,6 +8,7 @@ import { useTheme } from '../../hooks/useTheme';
 import InterestBubble from '../../components/InterestBubble';
 import { shapes } from '../../utils/shapes';
 import { loadStatusBar } from '../../utils/utilFunctions';
+import { RegistrationScreenNavigationProp, RegStepTwoRouteProp } from '../../types/navigation';
 
 
 const personalInterests: string[] = [
@@ -19,11 +20,46 @@ const theme = useTheme()
 
 
 export default function AskProffesionalInterestsScreen() {
-    const navigation = useNavigation()
+    const navigation = useNavigation<RegistrationScreenNavigationProp>();
+    const route = useRoute<RegStepTwoRouteProp>();
+    const { personalInfo } = route.params;
+    const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+
+    const handleContinue = () => {
+        navigation.navigate('RegStepThree', {
+            personalInfo,
+            professionalInterests: selectedInterests
+        });
+        console.log(selectedInterests)
+    };
+
+    const handleChoice = (interest: string) => {
+        setSelectedInterests(prevSelectedInterests => {
+            if (prevSelectedInterests.includes(interest)) {
+                return prevSelectedInterests.filter(item => item !== interest);
+            } else if (prevSelectedInterests.length < 500) {
+                return [...prevSelectedInterests, interest];
+            } else {
+                return prevSelectedInterests;
+            }
+        });
+    };
 
     useFocusEffect(() => {
         loadStatusBar(theme.cocao)
     })
+
+    function renderItem(array: string[]) {
+        return array.map((el, i) => {
+            return <InterestBubble
+                value={el}
+                key={i}
+                isSelected={selectedInterests.includes(el)}
+                onPress={() => handleChoice(el)}
+                count={selectedInterests.length}
+            />
+        })
+    }
 
 
     return (
@@ -39,12 +75,11 @@ export default function AskProffesionalInterestsScreen() {
 
                 <ScrollView style={styles.scrollView}>
                     <View style={styles.bubblesContainer}>
-                        <InterestBubble value={'Art'} />
                         {renderItem(personalInterests)}
                     </View>
                 </ScrollView>
 
-                <CustomButton onPress={() => navigation.navigate('RegStepThree')}>
+                <CustomButton onPress={handleContinue}>
                     <Text>Continue</Text>
                 </CustomButton>
             </View>
@@ -55,12 +90,6 @@ export default function AskProffesionalInterestsScreen() {
             />
         </SafeAreaView>
     );
-}
-
-function renderItem(array: string[]) {
-    return array.map((el, i) => {
-        return <InterestBubble value={el} key={i} />
-    })
 }
 
 

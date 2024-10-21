@@ -2,19 +2,26 @@ import React, { useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-const CustomButton = (props) => {
+interface CustomButtonProps {
+  onPress: any , 
+  children: Element , 
+  type: 'light' | 'dark'
+}
+
+
+const CustomButton = ({onPress, children, type}: CustomButtonProps) => {
   function getBgInitial() {
-    if (props.type == 'light') return '#EDE0D4'
+    if (type == 'light') return '#EDE0D4'
     else return '#886650'
   }
 
   function getBgAfterTap() {
-    if (props.type == 'light') return '#d4c8bc'
+    if (type == 'light') return '#d4c8bc'
     else return '#805f4a'
   }
 
   function getTextCol() {
-    if (props.type == 'light') return "#1E1E1E"
+    if (type == 'light') return "#1E1E1E"
     else return '#EDE0D4'
   }
 
@@ -53,7 +60,7 @@ const CustomButton = (props) => {
 
   return (
     <TouchableWithoutFeedback
-      onPress={props.onPress}
+      onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
@@ -68,7 +75,7 @@ const CustomButton = (props) => {
         ]}
       >
         <Animated.Text style={[styles.buttonText, { color: getTextCol() }]}>
-          {props.children}
+          {children}
         </Animated.Text>
       </Animated.View>
     </TouchableWithoutFeedback>

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import CustomButton from '../../components/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
@@ -12,11 +12,11 @@ import { icons } from '../../utils/icons';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { emailRegex, passwordRegex } from '../../utils/utilData';
 import ErrorToast from '../../components/toasts/ErrorToast';
+import { registerUser } from '../../services/AuthService';
+import { destinations } from '../../types/navigation';
 
 
 const theme = useTheme()
-
-
 
 
 export default function SignupScreen() {
@@ -30,11 +30,11 @@ export default function SignupScreen() {
     const [isPasswordFine, setPasswordFine] = useState(false)
     const [arePasswordsMatch, setPasswordsMatch] = useState(false)
     const [isEmailFine, setEmailFine] = useState(false)
-    const [serverErrorText, setServerErrorText] = useState('Firebase Error: Server felt down...')
-    const [showErrorToast, setShowErrorToast] = useState(true)
+    const [serverErrorText, setServerErrorText] = useState<SetStateAction<string | undefined>>('Firebase Error: Server felt down...')
+    const [showErrorToast, setShowErrorToast] = useState(false)
 
 
-    const navigation = useNavigation()
+    const navigation:any = useNavigation()
 
 
     useFocusEffect(() => {
@@ -43,8 +43,12 @@ export default function SignupScreen() {
     })
 
 
-    const onChangeDatePicker = (event, selectedDate) => {
+    const onChangeDatePicker = (
+        event: DateTimePickerEvent,
+        selectedDate?: Date | undefined
+    ) => {
         setShowDateTimePicker(false);
+
         if (event.type === 'set' && selectedDate) {
             setDob(selectedDate);
         }
@@ -68,9 +72,33 @@ export default function SignupScreen() {
         } else { setPasswordsMatch(false) }
     }, [passwordConfirm])
 
-    
-    function handleRegister() {
-        if (!arePasswordsMatch || isEmailFine || isPasswordFine) return
+
+    async function handleRegister() {
+        if (!name || !arePasswordsMatch || !isEmailFine || !isPasswordFine) {
+            setServerErrorText('Please fill all fields correctly');
+            setShowErrorToast(true);
+            return;
+        }
+
+        try {
+            const result = await registerUser({
+                email,
+                password,
+                displayName: name,
+                dob
+            });
+            console.log(result)
+
+            if (result.success) {
+                navigation.navigate(destinations.postRegistration.regStepOne.name);
+            } else {
+                setServerErrorText(result.error);
+                setShowErrorToast(true);
+            }
+        } catch (error) {
+            setServerErrorText('An unexpected error occurred');
+            setShowErrorToast(true);
+        }
     }
 
 
@@ -231,7 +259,7 @@ export default function SignupScreen() {
                         </View>
                     </View>
 
-                    <CustomButton onPress={() => { navigation.navigate('RegStepOne') }}>
+                    <CustomButton onPress={() => handleRegister()} type='dark'>
                         <Text>
                             Sign Up
                         </Text>
@@ -239,7 +267,7 @@ export default function SignupScreen() {
                 </View>
             </View>
             {showErrorToast &&
-                <ErrorToast setToast={setShowErrorToast} errorText={serverErrorText} colorNext={theme.beigeDarker} colorPrev={theme.beige}/>
+                <ErrorToast setToast={setShowErrorToast} errorText={serverErrorText} colorNext={theme.beigeDarker} colorPrev={theme.beige} />
             }
         </SafeAreaView>
     );

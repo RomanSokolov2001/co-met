@@ -2,19 +2,21 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CustomButton from '../../components/CustomButton';
 import { shapes } from '../../utils/shapes';
 import { useTheme } from '../../hooks/useTheme';
 import { loadStatusBar } from '../../utils/utilFunctions';
-import { destinations } from '../../types/navigation';
 
 
 const theme = useTheme()
 
 
-export default function WelcomeScreen() {
-  const navigation:any = useNavigation()
+export default function DefaultScreen() {
+  const navigation = useNavigation()
+
+  const inset = useSafeAreaInsets()
 
   useFocusEffect(() => {
     loadStatusBar(theme.beige)
@@ -39,7 +41,7 @@ export default function WelcomeScreen() {
         <Text style={styles.welcomeDescription}>
           Find the best study and work buddies, make your ideas come to life!
         </Text>
-        <CustomButton type={'light'} onPress={() => navigation.navigate(destinations.auth.login.name)}>
+        <CustomButton type={'light'} onPress={()=> {console.log("Pressed")}}>
           <Text>Get Started</Text>
         </CustomButton>
       </View>

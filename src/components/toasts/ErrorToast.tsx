@@ -1,11 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { loadStatusBar } from "../../utils/utilFunctions";
 import { useTheme } from "../../hooks/useTheme";
 
+interface ToastProps {
+    setToast: any
+    errorText: SetStateAction<string | undefined>
+    colorNext: string
+    colorPrev: string
+}
 
-export default function Toast({ setToast, errorText, colorNext, colorPrev }) {
+export default function Toast({ setToast, errorText, colorNext, colorPrev }: ToastProps) {
     const theme = useTheme()
     const opacity = useRef(new Animated.Value(0)).current;
     const [isMounted, setMounted] = useState(false)
