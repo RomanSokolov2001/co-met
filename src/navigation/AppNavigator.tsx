@@ -3,12 +3,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../wrappers/AuthContext';
 import { getUserInfo } from '../services/FirestoreService';
 import { useNavigation } from '@react-navigation/native';
-import { destinations } from '../utils/navDestinations';
+import { destinations } from '../types/navigation';
+
 
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
-  const navigation = useNavigation();
+  const navigation:any = useNavigation();
   const { user } = useAuth();
 
   const [isUserDataFilled, setUserDataFilled] = useState(false);
