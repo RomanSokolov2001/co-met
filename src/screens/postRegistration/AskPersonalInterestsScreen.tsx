@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from 'react-nat
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import CustomButton from '../../components/CustomButton';
+import CustomButton from '../../components/buttons/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import InterestBubble from '../../components/InterestBubble';
 import { shapes } from '../../utils/shapes';
@@ -37,7 +37,7 @@ export default function AskProffesionalInterestsScreen() {
         setSelectedInterests(prevSelectedInterests => {
             if (prevSelectedInterests.includes(interest)) {
                 return prevSelectedInterests.filter(item => item !== interest);
-            } else if (prevSelectedInterests.length < 500) {
+            } else if (prevSelectedInterests.length < 5) {
                 return [...prevSelectedInterests, interest];
             } else {
                 return prevSelectedInterests;
@@ -54,9 +54,9 @@ export default function AskProffesionalInterestsScreen() {
             return <InterestBubble
                 value={el}
                 key={i}
-                isSelected={selectedInterests.includes(el)}
                 onPress={() => handleChoice(el)}
-                count={selectedInterests.length}
+                selected={selectedInterests}
+                limit={4}
             />
         })
     }

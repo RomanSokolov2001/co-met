@@ -96,6 +96,8 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: theme.cocao,
         borderRadius: 20,
+        zIndex: 12,
+        backgroundColor: theme.beige
     },
     modalBtnText: {
         paddingHorizontal: 10,

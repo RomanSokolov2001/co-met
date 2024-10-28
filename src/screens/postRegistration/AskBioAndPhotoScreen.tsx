@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, Dimensions, TextInput, Alert } from 'rea
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import CustomButton from '../../components/CustomButton';
+import CustomButton from '../../components/buttons/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import { shapes } from '../../utils/shapes';
 import { loadStatusBar, pickImage } from '../../utils/utilFunctions';

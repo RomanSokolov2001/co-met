@@ -7,7 +7,8 @@ const colors = {
     cocoaDarker: '#6E533F',
     caramelDarker: '#8E6F50',
     brown: '#8F6F59',
-    milkChoco: '#A38774'
+    milkChoco: '#A38774',
+    beigeSlightlyDarker: '#f2e9e1'
 
 }
 

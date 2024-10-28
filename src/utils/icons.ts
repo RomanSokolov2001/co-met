@@ -22,6 +22,8 @@ const dot = require('../assets/icons/dot.png')
 const notes = require('../assets/icons/notes.png')
 const time = require('../assets/icons/time.png')
 const location = require('../assets/icons/location.png')
+const settings = require('../assets/icons/settings.png')
+
 
 
 
@@ -50,5 +52,6 @@ export const icons = {
     dot,
     time,
     location,
-    notes
+    notes,
+    settings,
 }

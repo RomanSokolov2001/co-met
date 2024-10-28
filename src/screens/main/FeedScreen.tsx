@@ -1,15 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CustomButton from '../../components/CustomButton';
-import { shapes } from '../../utils/shapes';
 import { useTheme } from '../../hooks/useTheme';
 import { loadStatusBar } from '../../utils/utilFunctions';
-import FeedHeader from '../../components/FeedHeader';
+import PageHeader from '../../components/PageHeader';
 import Post from '../../components/Post';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const theme = useTheme()
@@ -18,8 +17,6 @@ const theme = useTheme()
 export default function FeedScreen() {
   const navigation = useNavigation()
 
-  const inset = useSafeAreaInsets()
-
   useFocusEffect(() => {
     loadStatusBar(theme.beige)
   })
@@ -27,8 +24,14 @@ export default function FeedScreen() {
 
   return (
     <SafeAreaView style={styles.container} >
-      <FeedHeader/>
-      <Post/>
+      <PageHeader />
+      <ScrollView>
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+
+      </ScrollView>
 
 
     </SafeAreaView>
@@ -45,5 +48,5 @@ const styles = StyleSheet.create({
   },
 
 
- 
+
 })

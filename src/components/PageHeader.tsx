@@ -5,10 +5,15 @@ import DropDown from "./DropDown";
 
 const theme = useTheme()
 
-export default function FeedHeader() {
+export default function PageHeader({ pageName }) {
     return (
         <View style={styles.headerField}>
-            <DropDown/>
+            {pageName ? 
+                <Text style={styles.title}>{pageName}</Text>
+            :
+                <DropDown />
+
+            }
             <View style={styles.headerIconsAvatarPart}>
                 <Image
                     source={icons.starFilled}
@@ -33,7 +38,8 @@ const roundSize = 50
 const styles = StyleSheet.create({
     headerField: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        height: 65
     },
     headerIconsAvatarPart: {
         flexDirection: 'row',
@@ -59,4 +65,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginHorizontal: 10,
     },
+    title: {
+        width: 139,
+        margin: 10,
+        marginBottom: 6,
+        fontFamily: 'KiwiMaru-Medium',
+        fontSize: 16,
+        color: theme.coal,
+        alignSelf: 'center'
+    }
 })

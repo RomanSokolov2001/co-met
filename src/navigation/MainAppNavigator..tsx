@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabBar from "../components/BottomTabBar";
 import MyProfileScreen from "../screens/main/MyProfileScreen";
+import SearchScreen from "../screens/main/SearchScreen";
 
 
 const Tab = createBottomTabNavigator()
@@ -26,7 +27,7 @@ export default function MainAppNavigator() {
     return (
         <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={props => <BottomTabBar {...props} />}>
             <Tab.Screen name="Feed" component={FeedStackScreen} />
-            <Tab.Screen name="Search" component={FeedScreen} />
+            <Tab.Screen name="Search" component={SearchScreen} />
             <Tab.Screen name="AddPost" component={FeedScreen} />
             <Tab.Screen name="MyProfile" component={MyProfileScreen} />
         </Tab.Navigator>
