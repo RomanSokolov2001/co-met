@@ -1,35 +1,35 @@
 import React, { useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useTheme } from '../hooks/useTheme';
 
 interface CustomButtonProps {
-  onPress: any , 
-  children: Element , 
+  onPress: any,
+  children: Element,
   type: 'light' | 'dark'
 }
 
+const theme = useTheme()
 
-const CustomButton = ({onPress, children, type}: CustomButtonProps) => {
+const CustomButton = ({ onPress = () => console.log("Pressed"), children, type = "light" }: CustomButtonProps) => {
   function getBgInitial() {
-    if (type == 'light') return '#EDE0D4'
-    else return '#886650'
+    if (type == 'light') return theme.beige
+    else return theme.cocao
   }
 
   function getBgAfterTap() {
-    if (type == 'light') return '#d4c8bc'
-    else return '#805f4a'
+    if (type == 'light') return theme.beigeDarker
+    else return theme.cocoaDarker
   }
 
   function getTextCol() {
-    if (type == 'light') return "#1E1E1E"
-    else return '#EDE0D4'
+    if (type == 'light') return theme.coal
+    else return theme.beige
   }
 
-  // Create an Animated.Value to control all our animations
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
-    // Animate to 1 when pressed
     Animated.timing(animatedValue, {
       toValue: 1,
       duration: 50,
@@ -38,7 +38,6 @@ const CustomButton = ({onPress, children, type}: CustomButtonProps) => {
   };
 
   const handlePressOut = () => {
-    // Animate back to 0 when released
     Animated.timing(animatedValue, {
       toValue: 0,
       duration: 50,
@@ -46,16 +45,14 @@ const CustomButton = ({onPress, children, type}: CustomButtonProps) => {
     }).start();
   };
 
-  // Interpolate background color
   const backgroundColor = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [getBgInitial(), getBgAfterTap()],
   });
 
-  // Interpolate button size
   const scale = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, 0.95], // Button will shrink to 95% of its size when pressed
+    outputRange: [1, 0.95],
   });
 
   return (
@@ -69,7 +66,6 @@ const CustomButton = ({onPress, children, type}: CustomButtonProps) => {
           styles.buttonField,
           {
             backgroundColor,
-            // Apply scaling transform
             transform: [{ scale }]
           },
         ]}

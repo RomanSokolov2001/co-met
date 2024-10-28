@@ -57,16 +57,13 @@ export default function LoginScreen() {
             return;
         }
 
-        // If validation passes, attempt login
         setLoading(true);
         try {
             const result = await loginUser({ email, password });
 
             if (result.success) {
-                // Navigate to main app screen on successful login
-                navigation.navigate(destinations.main.feeds.name); // Adjust the route name as needed
+                navigation.navigate(destinations.main.feeds.name);
             } else {
-                // Show error toast with server error
                 setServerErrorText(result.error);
                 setShowErrorToast(true);
             }

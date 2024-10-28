@@ -10,6 +10,7 @@ interface interestBubbleProps {
     onPress: any
 }
 
+
 const InterestBubble = ({ value, isSelected, onPress, count }: interestBubbleProps) => {
     const theme = useTheme();
 
@@ -17,7 +18,6 @@ const InterestBubble = ({ value, isSelected, onPress, count }: interestBubblePro
         onPress();
     }
 
-    // Code for animation. In press out triggers onPress from props
     const animatedColorValue = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
     const animatedSizeValue = useRef(new Animated.Value(0)).current;
 
