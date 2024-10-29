@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import AuthNavigator from './navigation/AuthNavigator';
-import AppNavigator from './navigation/AppNavigator';
+
 import { AuthProvider, useAuth } from './wrappers/AuthContext';
 import { ContextProvider } from './wrappers/AppContext';
-
+import PostRegNavigator from './navigation/PostRegNavigator';
+import MainAppNavigator from './navigation/MainAppNavigator.';
 
 const RootNavigator = () => {
   const { user, loading } = useAuth();
@@ -18,18 +20,27 @@ const RootNavigator = () => {
     );
   }
 
-  return user ? <AppNavigator /> : <AuthNavigator />;
+  return (
+    user ?
+      (false ?
+        <PostRegNavigator /> : <MainAppNavigator />
+      )
+      :
+      <AuthNavigator />
+  );
 };
 
-function App(): React.JSX.Element {
+export default function App() {
   return (
-    <AuthProvider>
-      <ContextProvider>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </ContextProvider>
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <ContextProvider>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </ContextProvider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -40,5 +51,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-export default App;

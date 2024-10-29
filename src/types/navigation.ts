@@ -4,7 +4,7 @@ import { RouteProp } from '@react-navigation/native';
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignupScreen from "../screens/auth/SignupScreen";
 import WelcomeScreen from "../screens/auth/WelcomeScreen";
-import DefaultScreen from "../screens/main/DefaultScreen";
+import FeedScreen from "../screens/main/FeedScreen";
 import AskBioAndPhotoScreen from "../screens/postRegistration/AskBioAndPhotoScreen";
 import AskPersonalInfoScreen from "../screens/postRegistration/AskPersonalInfoScreen";
 import AskPersonalInterestsScreen from "../screens/postRegistration/AskPersonalInterestsScreen";
@@ -48,7 +48,7 @@ export const destinations = {
   main: {
     feeds: {
       name: "Feed",
-      component: DefaultScreen,
+      component: FeedScreen,
     },
   }
 };

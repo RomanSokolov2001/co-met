@@ -5,7 +5,11 @@ const colors = {
     coal: '#1E1E1E',
     beigeDarker: '#BCB2A8',
     cocoaDarker: '#6E533F',
-    caramelDarker: '#8E6F50'
+    caramelDarker: '#8E6F50',
+    brown: '#8F6F59',
+    milkChoco: '#A38774',
+    beigeSlightlyDarker: '#f2e9e1'
+
 }
 
 export const useTheme = () => {

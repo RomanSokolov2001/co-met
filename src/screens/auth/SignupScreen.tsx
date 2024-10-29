@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
-import CustomButton from '../../components/CustomButton';
+import CustomButton from '../../components/buttons/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import { formatDateToCurrentLang, loadStatusBar } from '../../utils/utilFunctions';
 import { icons } from '../../utils/icons';
