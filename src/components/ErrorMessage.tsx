@@ -1,13 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 
+
 interface ErrorMessageProps {
     text: string,
     trigger: number
-
 }
 
-// When trigger is changed. Shows the error message on Sign Up page
 export default function ErrorMessage({ text, trigger }: ErrorMessageProps) {
     const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -35,6 +34,7 @@ export default function ErrorMessage({ text, trigger }: ErrorMessageProps) {
         </Animated.View>
     );
 }
+
 
 const styles = StyleSheet.create({
     text: {

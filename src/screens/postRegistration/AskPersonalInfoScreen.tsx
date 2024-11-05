@@ -1,53 +1,56 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TextInput } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, Image, Dimensions, TextInput, StatusBar, Alert } from 'react-native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
 import CustomButton from '../../components/buttons/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import { shapes } from '../../utils/shapes';
-import { loadStatusBar } from '../../utils/utilFunctions';
-import { destinations, RegistrationScreenNavigationProp } from '../../types/navigation';
+import { auth } from '../../../firebaseConfig';
 
 
 const theme = useTheme()
 
 
 export default function AskPersonalInfoScreen() {
-    const navigation:any = useNavigation()
+    const navigation: any = useNavigation()
     const [location, setLocation] = useState('');
     const [occupation, setOccupation] = useState('');
     const [fieldOfWork, setFieldOfWork] = useState('');
     const [workplace, setWorkplace] = useState('');
-
-    useFocusEffect(() => {
-        loadStatusBar(theme.cocao)
-    })
-    const dest: string = destinations.postRegistration.regStepOne.name
+    
 
     const handleContinue = () => {
+        if (location =='') {
+            Alert.alert('Fill obligatory field!')
+            return
+        }
         navigation.navigate('RegStepTwo', {
-            personalInfo: {
-                location,
-                occupation,
-                fieldOfWork,
-                workplace
-            }
+            location,
+            occupation,
+            fieldOfWork,
+            workplace,
+            
         });
     };
 
+    useFocusEffect(() => {
+        StatusBar.setBackgroundColor("rgba(0, 0, 0, 0)")
+        StatusBar.setTranslucent(true);
+    },)
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Text style={styles.pageDescription}>What do you do and where?</Text>
             <View style={styles.formField}>
                 <Text style={styles.value}>
-                    Where are you located?
+                    Where are you located?*
                 </Text>
                 <View style={styles.inputField}>
                     <TextInput
                         placeholder='City/Town, Country'
                         placeholderTextColor={'#8a8988'}
+                        value={location}
+                        onChangeText={setLocation}
                     />
                 </View>
 
@@ -96,16 +99,17 @@ export default function AskPersonalInfoScreen() {
                 source={shapes.rectBrownTop}
                 style={styles.rectBrownBottom}
             />
-        </SafeAreaView>
+        </View>
     );
 }
 
-
+const BAR_WIDTH = StatusBar.currentHeight
 const w = Dimensions.get('screen').width
 const h = Dimensions.get('screen').height
 
 const styles = StyleSheet.create({
     container: {
+        paddingTop: BAR_WIDTH,
         width: '100%',
         height: '100%',
         backgroundColor: '#EDE0D4',
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
         top: 0,
         zIndex: -1,
         width: "100%",
-        height: h / 3.5,
+        height: h / 2.5,
         resizeMode: "stretch"
     }
 })

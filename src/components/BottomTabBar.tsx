@@ -1,10 +1,11 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+
 import { icons } from '../utils/icons';
 import { useTheme } from '../hooks/useTheme';
 
-const theme = useTheme()
 
-export default function BottomTabBar({ state, descriptors, navigation }) {
+export default function BottomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     return (
         <View style={styles.tabContainer}>
             {state.routes.map((route, index) => {
@@ -47,13 +48,12 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                         onLongPress={onLongPress}
                     >
                         <View
-                            style={[styles.tabField, { backgroundColor: getBg(isFocused) }]}
+                            style={[styles.tabField, { backgroundColor: getTabBg(isFocused) }]}
                         >
                             <Image
-                                source={getIcon(label)} style={styles.icon}
+                                source={getTabIcon(label)} style={styles.icon}
                                 tintColor={"black"} />
                         </View>
-
                     </TouchableWithoutFeedback>
                 );
             })}
@@ -61,7 +61,8 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
     );
 }
 
-function getBg(isFocused: boolean) {
+
+function getTabBg(isFocused: boolean) {
     if (isFocused) {
         return theme.cocao
     } else {
@@ -69,17 +70,20 @@ function getBg(isFocused: boolean) {
     }
 }
 
-const getIcon = (label: string) => {
+const getTabIcon = (label: string) => {
     if (label === 'Feed') {
         return icons.home
     } else if (label == 'Search') {
         return icons.search
     } else if (label == 'AddPost') {
         return icons.add
-    } else if (label == 'MyProfile') {
+    } else if (label == 'MyProfileStack') {
         return icons.profile
     }
 }
+
+
+const theme = useTheme()
 
 const styles = StyleSheet.create({
     tabContainer: {

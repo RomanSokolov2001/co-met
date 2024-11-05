@@ -15,9 +15,6 @@ import { loginUser } from '../../services/AuthService';
 import { destinations } from '../../types/navigation';
 
 
-const theme = useTheme()
-
-
 export default function LoginScreen() {
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
@@ -30,14 +27,7 @@ export default function LoginScreen() {
 
     const navigation: any = useNavigation()
 
-
-    useFocusEffect(() => {
-        if (showErrorToast) return
-        else {
-            loadStatusBar(theme.cocao)
-        }
-    })
-
+    
     // Used CHAT GPT to use 2 IF instead of 5
     async function tryLogin() {
         if (!email || !password) return;
@@ -77,7 +67,7 @@ export default function LoginScreen() {
 
 
     return (
-        <SafeAreaView style={styles.container} >
+        <View style={styles.container} >
             <View style={styles.pageInfoField}>
                 <Text style={styles.pageInfoTitle}>CO-MET</Text>
 
@@ -145,16 +135,19 @@ export default function LoginScreen() {
             {showErrorToast &&
                 <ErrorToast setToast={setShowErrorToast} errorText={serverErrorText} />
             }
-        </SafeAreaView>
+        </View>
     );
 }
 
 
+const theme = useTheme()
 const w = Dimensions.get('screen').width
 const h = Dimensions.get('screen').height
+const BAR_WIDTH = StatusBar.currentHeight
 
 const styles = StyleSheet.create({
     container: {
+        paddingTop: BAR_WIDTH,
         width: '100%',
         height: '100%',
         backgroundColor: theme.beige,
@@ -226,7 +219,7 @@ const styles = StyleSheet.create({
         top: 0,
         zIndex: -1,
         width: "100%",
-        height: h / 5,
+        height: h / 3,
         resizeMode: "stretch"
     },
     rectBeigeTop: {
@@ -234,7 +227,7 @@ const styles = StyleSheet.create({
         top: 0,
         position: 'absolute',
         width: "100%",
-        height: h / 2.5,
+        height: h / 2,
         resizeMode: "stretch"
     },
 })

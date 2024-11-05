@@ -7,7 +7,6 @@ const person2 = require('../assets/icons/person-2.png')
 const person = require('../assets/icons/person.png')
 const check = require('../assets/icons/check.png')
 const cross = require('../assets/icons/cross.png')
-
 const home = require('../assets/icons/home.png')
 const profile = require('../assets/icons/profile.png')
 const search = require('../assets/icons/search.png')
@@ -23,8 +22,11 @@ const notes = require('../assets/icons/notes.png')
 const time = require('../assets/icons/time.png')
 const location = require('../assets/icons/location.png')
 const settings = require('../assets/icons/settings.png')
-
-
+const logout = require('../assets/icons/logout.png')
+const arrowLeft = require('../assets/icons/arrow-left.png')
+const hamburger = require('../assets/icons/hamburger.png')
+const edit = require('../assets/icons/edit.png')
+const bin = require('../assets/icons/bin.png')
 
 
 
@@ -54,4 +56,9 @@ export const icons = {
     location,
     notes,
     settings,
+    logout,
+    arrowLeft,
+    hamburger,
+    bin,
+    edit
 }

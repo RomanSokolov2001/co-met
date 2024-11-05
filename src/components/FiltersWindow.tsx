@@ -9,27 +9,59 @@ import {
     Text,
     ScrollView,
 } from 'react-native';
+
 import { useTheme } from '../hooks/useTheme';
 import { loadStatusBar } from '../utils/utilFunctions';
 import InterestBubble from './InterestBubble';
+import { getPersonalTags, getPostTags, getProfessionalTags } from '../services/FirestoreService';
 
-const personalInterests: string[] = [
-    'Art', 'Photography', 'Music', 'Cooking', 'Traveling', 'Fitness', 'Gardening', 'Film', 'Writing', 'Languages',
-    'Astronomy', 'Fashion', 'Dancing', 'Gaming', 'Hiking', 'Camping', 'Reading', 'Meditation', 'Yoga', 'Sports',
-];
 
-const { height: windowHeight } = Dimensions.get('window');
-const theme = useTheme();
+interface FiltersWindowProps {
+    isVisible: boolean
+    onClose: (location: string, tags: string[]) => void
+}
 
-const FiltersWindow = ({ isVisible, onClose }) => {
+const FiltersWindow = ({ isVisible, onClose, setLocation: setLocationFromParent, setTags: setTagsFromParent }: FiltersWindowProps) => {
+    const [trigger, setTrigger] = useState(0)
     const [location, setLocation] = useState('');
-    const slideAnim = useRef(new Animated.Value(windowHeight)).current;
-    const filtersHeight = windowHeight * 0.7;
-    const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [tags, setTags] = useState([])
+
+    const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+    const filtersHeight = screenHeight * 0.7;
+
+
+    useEffect(() => {
+        async function setPostTags() {
+            const { data: personalTags } = await getPersonalTags()
+            const { data: professionalTags } = await getProfessionalTags()
+            setTags([...personalTags, ...professionalTags]);
+
+        }
+        function perfomAnimation() {
+            Animated.timing(slideAnim, {
+                toValue: isVisible ? screenHeight - filtersHeight : screenHeight,
+                duration: 300,
+                useNativeDriver: false,
+            }).start();
+        }
+
+        setPostTags()
+        perfomAnimation()
+
+
+    }, [isVisible]);
+
+
+    function handleClose() {
+        onClose()
+        setLocationFromParent(location)
+        setTagsFromParent(selectedTags)
+    }
 
 
     const handleChoice = (interest: string) => {
-        setSelectedInterests(prevSelectedInterests => {
+        setSelectedTags(prevSelectedInterests => {
             if (prevSelectedInterests.includes(interest)) {
                 return prevSelectedInterests.filter(item => item !== interest);
             } else
@@ -37,25 +69,13 @@ const FiltersWindow = ({ isVisible, onClose }) => {
         });
     };
 
-    useEffect(() => {
-        Animated.timing(slideAnim, {
-            toValue: isVisible ? windowHeight - filtersHeight : windowHeight,
-            duration: 300,
-            useNativeDriver: false,
-        }).start();
 
-        if (isVisible) {
-            loadStatusBar(theme.beigeDarker);
-        } else {
-            loadStatusBar(theme.beige);
-        }
-    }, [isVisible]);
+    function resetFilter() {
+        setSelectedTags([])
+        setLocation('')
+        setTrigger(trigger + 1)
+    }
 
-    const handleLocationChange = (text) => {
-        setLocation(text);
-        // You can add additional logic here to handle the location filter
-        // such as triggering a search or updating parent component
-    };
 
     function renderItem(array: string[]) {
         return array.map((el, i) => {
@@ -63,20 +83,16 @@ const FiltersWindow = ({ isVisible, onClose }) => {
                 value={el}
                 key={i}
                 onPress={() => handleChoice(el)}
-                selected={selectedInterests}
+                selected={selectedTags}
+                trigger={trigger}
             />
         })
-    }
-
-    function resetFilter() {
-        setSelectedInterests([])
-        setLocation('')
     }
 
     return (
         <>
             {isVisible && (
-                <TouchableWithoutFeedback onPress={onClose}>
+                <TouchableWithoutFeedback onPress={() => handleClose()}>
                     <View style={styles.overlay} />
                 </TouchableWithoutFeedback>
             )}
@@ -92,7 +108,7 @@ const FiltersWindow = ({ isVisible, onClose }) => {
                 <View style={styles.content}>
                     <View style={styles.filterHeader}>
                         <Text style={styles.title}>Filters</Text>
-                        <TouchableWithoutFeedback onPress={()=>resetFilter()}>
+                        <TouchableWithoutFeedback onPress={() => resetFilter()}>
                             <View style={{ padding: 10 }}>
                                 <Text style={styles.reset}>Reset</Text>
                             </View>
@@ -105,7 +121,7 @@ const FiltersWindow = ({ isVisible, onClose }) => {
                         <View style={styles.inputField}>
                             <TextInput
                                 value={location}
-                                onChangeText={handleLocationChange}
+                                onChangeText={setLocation}
                                 placeholder="Enter location"
                                 placeholderTextColor={theme.beigeDarker}
                             />
@@ -114,7 +130,7 @@ const FiltersWindow = ({ isVisible, onClose }) => {
                     </View>
                     <ScrollView style={styles.scrollView}>
                         <View style={styles.bubblesContainer}>
-                            {renderItem(personalInterests)}
+                            {renderItem(tags)}
                         </View>
                     </ScrollView>
                 </View>
@@ -122,6 +138,10 @@ const FiltersWindow = ({ isVisible, onClose }) => {
         </>
     );
 };
+
+const screenHeight = Dimensions.get('window').height;
+const theme = useTheme();
+
 
 const styles = StyleSheet.create({
     container: {

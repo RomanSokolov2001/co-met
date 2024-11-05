@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TextInput, Alert } from 'react-native';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image, Dimensions, TextInput, Alert, StatusBar } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CustomButton from '../../components/buttons/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import { shapes } from '../../utils/shapes';
-import { loadStatusBar, pickImage } from '../../utils/utilFunctions';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { pickImage } from '../../utils/utilFunctions';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useAuth } from '../../wrappers/AuthContext';
-import { completeUserProfile } from '../../services/FirestoreService';
-import { destinations } from '../../types/navigation';
+import { updateUserProfile } from '../../services/FirestoreService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useProfile } from '../../wrappers/ProfileContext';
+import { auth } from '../../../firebaseConfig';
 
 
 const theme = useTheme()
 
 
-export default function AskBioAndPhotoScreen() {
-    const navigation: any = useNavigation();
+export default function AskBioAndPhotoScreen({ onProfileFill }) {
     const [loading, setLoading] = useState(false);
     const route = useRoute();
 
@@ -27,24 +27,23 @@ export default function AskBioAndPhotoScreen() {
     const [bio, setBio] = useState('');
     const profileData = route.params;
 
-
-    useFocusEffect(() => {
-        loadStatusBar(theme.beige)
-    })
+    const { setUserProfile } = useProfile();
 
     const handleCompleteProfile = async () => {
         if (!user) return;
         setLoading(true);
 
         try {
-            const result = await completeUserProfile(user.uid, {
+            const result = await updateUserProfile({
                 ...profileData,
                 imageUri,
-                bio
+                bio,
             });
 
             if (result.success) {
-                navigation.navigate(destinations.main.feeds.name);
+                setUserProfile(result.updateData)
+                await AsyncStorage.setItem('@profile_status', "t");
+                onProfileFill()
             } else {
                 Alert.alert('Error', result.error);
             }
@@ -57,7 +56,7 @@ export default function AskBioAndPhotoScreen() {
 
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Text style={styles.pageDescription}>
                 {`Last but not least - show who you are!`}
             </Text>
@@ -81,6 +80,8 @@ export default function AskBioAndPhotoScreen() {
                     <TextInput
                         placeholder='Add short bio'
                         placeholderTextColor={theme.beige}
+                        value={bio}
+                        onChangeText={setBio}
                     />
                 </View>
                 <CustomButton type={'light'} onPress={handleCompleteProfile}>
@@ -106,11 +107,11 @@ export default function AskBioAndPhotoScreen() {
                 source={shapes.rectBrownBottom}
                 style={styles.rectBrownBottom}
             />
-        </SafeAreaView>
+        </View>
     );
 }
 
-
+const BAR_WIDTH = StatusBar.currentHeight
 const w = Dimensions.get('screen').width
 const h = Dimensions.get('screen').height
 
@@ -118,6 +119,7 @@ const roundSize = 150
 
 const styles = StyleSheet.create({
     container: {
+        paddingTop: BAR_WIDTH,
         width: '100%',
         height: '100%',
         backgroundColor: '#EDE0D4',
@@ -146,7 +148,7 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         borderWidth: 2,
         borderColor: theme.coal,
-        top: h / 4,
+        top: h / 3.4,
         left: w / 10,
         alignItems: 'center',
         justifyContent: 'center'

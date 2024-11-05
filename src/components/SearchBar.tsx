@@ -1,10 +1,17 @@
-import { Dimensions, Image, StyleSheet, TextInput, TouchableNativeFeedback, TouchableWithoutFeedback, View } from "react-native";
+import { Dimensions, Image, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { icons } from "../utils/icons";
 import { useTheme } from "../hooks/useTheme";
 
-const theme = useTheme()
 
-export default function SearchBar({ value, onChangeText, onSettingsPress }) {
+interface SearchBarProps {
+    value: string
+    onChangeText: () => void
+    onSettingsPress: () => void
+}
+
+export default function SearchBar({ value, onChangeText, onSettingsPress }: SearchBarProps) {
+
+    
     return (
         <View style={styles.searchBarContainer}>
             <View style={styles.searchField}>
@@ -13,15 +20,13 @@ export default function SearchBar({ value, onChangeText, onSettingsPress }) {
                     style={styles.icon}
                     tintColor={theme.coal}
                 />
-
                 <View>
                     <TextInput
                         value={value}
                         onChangeText={onChangeText}
-                        style={[{ fontSize: 16, width: w * 0.55 }]}
+                        style={[{ fontSize: 16, width: screenWidth * 0.55 }]}
                     />
                 </View>
-
             </View>
             <TouchableWithoutFeedback onPress={onSettingsPress}>
                 <View style={styles.settingsField}>
@@ -30,14 +35,14 @@ export default function SearchBar({ value, onChangeText, onSettingsPress }) {
                         style={[styles.icon, { marginLeft: 10 }]}
                     />
                 </View>
-
             </TouchableWithoutFeedback>
-
         </View>
     )
 }
 
-const w = Dimensions.get('screen').width
+
+const theme = useTheme()
+const screenWidth = Dimensions.get('window').width
 
 const styles = StyleSheet.create({
     searchBarContainer: {
@@ -54,11 +59,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         backgroundColor: theme.milkChoco,
         flexDirection: 'row',
-        width: w * 0.7
+        width: screenWidth * 0.7
     },
     settingsField: {
         alignItems: 'center',
         justifyContent: 'center',
-     
+
     }
 })

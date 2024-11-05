@@ -1,41 +1,40 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+
 import { icons } from "../utils/icons";
 import { useTheme } from "../hooks/useTheme";
 
-const theme = useTheme()
 
-export default function DropDown() {
+interface DropDownProps {
+    options: string[]
+    onSelect: (option: string) => void
+}
+
+interface ModalProps {
+    options: string[]
+    selectedOption: string
+}
+
+export default function DropDown({ options, onSelect }: DropDownProps) {
     const [isDropped, setDropped] = useState(false)
-    const [selectedOption, setSelectedOption] = useState('Local feed')
-    const options = ['Local feed', 'Happening soon', 'Favourite topics']
+    const [selectedOption, setSelectedOption] = useState(options[0])
 
-    function doDrop() {
-        setDropped(!isDropped)
-    }
+    const maxModalWidth = getLongestString(options).length * 14
 
-    function getArrow() {
-        if (isDropped) {
-            return icons.arrowUp
-        }
-        else {
-            return (icons.arrowDown)
-        }
-    }
 
-    function Modal({options, selectedOption, onPress}) {
-       
-        function onBtnPress(option) {
+    function Modal({ options, selectedOption }: ModalProps) {
+        function onBtnPress(option: string) {
             setSelectedOption(option)
-            setDropped(false)
+            onSelect(option)
+            setDropped(!isDropped)
         }
 
         return (
-            <View style={styles.modalField}>
+            <View style={[styles.modalField, { width: maxModalWidth }]}>
                 {options.map((option) => {
                     if (option !== selectedOption)
                         return (
-                            <TouchableOpacity onPress={()=>onBtnPress(option)}>
+                            <TouchableOpacity onPress={() => onBtnPress(option)}>
                                 <View style={styles.modalBtnField}>
                                     <Text style={styles.modalBtnText}>
                                         {option}
@@ -51,11 +50,11 @@ export default function DropDown() {
 
     return (
         <View>
-            <TouchableWithoutFeedback onPress={() => doDrop()}>
+            <TouchableWithoutFeedback onPress={() => setDropped(!isDropped)}>
                 <View style={styles.dropDownBtnField}>
                     <Text style={styles.title}>{selectedOption}</Text>
                     <Image
-                        source={getArrow()}
+                        source={isDropped ? icons.arrowUp : icons.arrowDown}
                         style={styles.icon}
                     />
                 </View>
@@ -67,6 +66,20 @@ export default function DropDown() {
     )
 }
 
+
+const theme = useTheme()
+
+function getLongestString(arr: string[]) {
+    var longestString = arr[0]
+    arr.map((el) => {
+        if (el.length > longestString.length) {
+            longestString = el
+        }
+    })
+    return longestString
+}
+
+
 const styles = StyleSheet.create({
     dropDownBtnField: {
         flexDirection: 'row',
@@ -75,7 +88,6 @@ const styles = StyleSheet.create({
     },
 
     title: {
-        width: 139,
         marginTop: 10,
         marginBottom: 4,
         fontFamily: 'KiwiMaru-Medium',
@@ -91,13 +103,13 @@ const styles = StyleSheet.create({
 
     modalField: {
         position: 'absolute',
-        width: 180,
-        bottom: -70,
+        top: 50,
         borderWidth: 2,
         borderColor: theme.cocao,
         borderRadius: 20,
         zIndex: 12,
-        backgroundColor: theme.beige
+        backgroundColor: theme.beige,
+        flexDirection: 'column'
     },
     modalBtnText: {
         paddingHorizontal: 10,

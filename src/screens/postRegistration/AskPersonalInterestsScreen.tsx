@@ -1,33 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from 'react-native';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, StatusBar } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CustomButton from '../../components/buttons/CustomButton';
 import { useTheme } from '../../hooks/useTheme';
 import InterestBubble from '../../components/InterestBubble';
 import { shapes } from '../../utils/shapes';
-import { loadStatusBar } from '../../utils/utilFunctions';
 import { RegistrationScreenNavigationProp, RegStepThreeRouteProp } from '../../types/navigation';
-
-
-const personalInterests: string[] = [
-    'Art', 'Photography', 'Music', 'Cooking', 'Traveling', 'Fitness', 'Gardening', 'Film', 'Writing', 'Languages',
-    'Astronomy', 'Fashion', 'Dancing', 'Gaming', 'Hiking', 'Camping', 'Reading', 'Meditation', 'Yoga', 'Sports',
-];
-
-const theme = useTheme()
+import { getPersonalTags } from '../../services/FirestoreService';
 
 
 export default function AskProffesionalInterestsScreen() {
     const navigation = useNavigation<RegistrationScreenNavigationProp>();
     const route = useRoute<RegStepThreeRouteProp>();
-    const { personalInfo, professionalInterests } = route.params;
+    const {
+        location,
+        occupation,
+        fieldOfWork,
+        workplace,
+        professionalInterests,
+    } = route.params;
+
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+    const [personalTags, setPersonalTags] = useState([])
+
 
     const handleContinue = () => {
         navigation.navigate('RegStepFour', {
-            personalInfo,
+            location,
+            occupation,
+            fieldOfWork,
+            workplace,
             professionalInterests: professionalInterests,
             personalInterests: selectedInterests
         });
@@ -45,11 +49,13 @@ export default function AskProffesionalInterestsScreen() {
         });
     };
 
-    useFocusEffect(() => {
-        loadStatusBar(theme.cocao)
-    })
+    const loadPersonalTags = async () => {
+        const { success, data } = await getPersonalTags()
+        setPersonalTags(data)
+    }
 
     function renderItem(array: string[]) {
+        loadPersonalTags()
         return array.map((el, i) => {
             return <InterestBubble
                 value={el}
@@ -63,7 +69,7 @@ export default function AskProffesionalInterestsScreen() {
 
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Text style={styles.pageDescription}>
                 {`Share your\ninterests with the community! pt.2`}
             </Text>
@@ -75,7 +81,7 @@ export default function AskProffesionalInterestsScreen() {
 
                 <ScrollView style={styles.scrollView}>
                     <View style={styles.bubblesContainer}>
-                        {renderItem(personalInterests)}
+                        {renderItem(personalTags)}
                     </View>
                 </ScrollView>
 
@@ -88,16 +94,19 @@ export default function AskProffesionalInterestsScreen() {
                 source={shapes.rectBrownTopReverse}
                 style={styles.rectBrownTopReverse}
             />
-        </SafeAreaView>
+        </View>
     );
 }
 
 
+const theme = useTheme()
+const BAR_WIDTH = StatusBar.currentHeight
 const w = Dimensions.get('screen').width
 const h = Dimensions.get('screen').height
 
 const styles = StyleSheet.create({
     container: {
+        paddingTop: BAR_WIDTH,
         width: '100%',
         height: '100%',
         backgroundColor: '#EDE0D4',
@@ -140,7 +149,7 @@ const styles = StyleSheet.create({
         top: 0,
         zIndex: -1,
         width: "100%",
-        height: h / 3.5,
+        height: h / 3,
         resizeMode: "stretch",
     }
 })

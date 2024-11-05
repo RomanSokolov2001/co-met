@@ -2,38 +2,51 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { icons } from "../utils/icons";
 import { useTheme } from "../hooks/useTheme";
 import DropDown from "./DropDown";
+import { useProfile } from "../wrappers/ProfileContext";
 
-const theme = useTheme()
+interface PageHeaderProps {
+    options: string[] | null,
+    onSelect: () => void
+}
 
-export default function PageHeader({ pageName }) {
+export default function PageHeader({ options, onSelect }: PageHeaderProps) {
+    const { profile } = useProfile()
     return (
         <View style={styles.headerField}>
-            {pageName ? 
-                <Text style={styles.title}>{pageName}</Text>
-            :
-                <DropDown />
-
+            {options ?
+                <DropDown options={options} onSelect={onSelect} />
+                :
+                <View></View>
             }
+
             <View style={styles.headerIconsAvatarPart}>
-                <Image
+                {/* <Image
                     source={icons.starFilled}
                     style={styles.icon}
                 />
                 <Image
                     source={icons.bell}
                     style={styles.icon}
-                />
+                /> */}
                 <View style={styles.round}>
-                    <Image
-                        style={styles.avatar}
-                    />
+                    {
+                        profile?.photoURL &&
+                        <Image
+                            source={{ uri: profile.photoURL }}
+                            style={styles.avatar}
+                        />
+                    }
+
                 </View>
             </View>
         </View>
     )
 }
 
+
 const roundSize = 50
+
+const theme = useTheme()
 
 const styles = StyleSheet.create({
     headerField: {
@@ -51,6 +64,8 @@ const styles = StyleSheet.create({
     },
 
     avatar: {
+        width: roundSize,
+        height: roundSize,
         borderRadius: 100,
         borderWidth: 2,
         borderColor: theme.coal
@@ -63,6 +78,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: theme.coal,
         alignItems: 'center',
+        justifyContent: 'center',
         marginHorizontal: 10,
     },
     title: {

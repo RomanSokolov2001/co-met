@@ -3,24 +3,63 @@ import { Animated, StyleSheet, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useTheme } from '../hooks/useTheme';
 
+
 interface interestBubbleProps {
     value: string,
     isSelected: boolean,
     count: number,
     onPress: any,
     limit: number,
-    selected: string[]
+    selected: string[],
+    trigger: number
 }
 
-
-const InterestBubble = ({ value, onPress, limit = 999, selected }: interestBubbleProps) => {
-    const theme = useTheme();
-
+const InterestBubble = ({ value, onPress, limit = 999, selected, trigger }: interestBubbleProps) => {
     const isSelected = selected.includes(value)
 
     const animatedColorValue = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
     const animatedSizeValue = useRef(new Animated.Value(0)).current;
 
+    const backgroundColor = animatedColorValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [theme.beige, theme.cocao],
+    });
+
+    const scale = animatedSizeValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0.95],
+    });
+
+    useEffect(() => {
+        if (!selected.includes(value)) {
+            Animated.timing(animatedColorValue, {
+                toValue: 0,
+                duration: 100,
+                useNativeDriver: false,
+            }).start();
+        } else {
+            Animated.timing(animatedColorValue, {
+                toValue: 1,
+                duration: 100,
+                useNativeDriver: false,
+            }).start();
+        }
+    }, [selected])
+
+    useEffect(() => {
+        if (!selected.includes(value)) {
+            Animated.timing(animatedColorValue, {
+                toValue: 0,
+                duration: 100,
+                useNativeDriver: false,
+            }).start();
+        }
+    }, [trigger])
+
+
+    const handlePress = () => {
+        onPress()
+    }
 
     const handlePressIn = () => {
         Animated.timing(animatedSizeValue, {
@@ -38,36 +77,6 @@ const InterestBubble = ({ value, onPress, limit = 999, selected }: interestBubbl
         }).start();
     };
 
-    const handlePress = () => {
-        if (!isSelected && selected.length > limit) return
-        onPress()
-        Animated.timing(animatedColorValue, {
-            toValue: isSelected ? 0 : 1,
-            duration: 100,
-            useNativeDriver: false,
-        }).start();
-    }
-
-    useEffect(() => {
-        if (!selected.includes(value)) {
-            Animated.timing(animatedColorValue, {
-                toValue: 0,
-                duration: 100,
-                useNativeDriver: false,
-            }).start();
-        }
-    }, [selected])
-
-
-    const backgroundColor = animatedColorValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [theme.beige, theme.cocao],
-    });
-
-    const scale = animatedSizeValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [1, 0.95],
-    });
 
     return (
         <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut} onPress={handlePress}>
@@ -89,6 +98,8 @@ const InterestBubble = ({ value, onPress, limit = 999, selected }: interestBubbl
     );
 };
 
+
+const theme = useTheme();
 
 const styles = StyleSheet.create({
     buttonField: {
