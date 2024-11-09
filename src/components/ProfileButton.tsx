@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useTheme } from '../hooks/useTheme';
+
 
 interface CustomButtonProps {
     onPress: any,
@@ -10,15 +11,51 @@ interface CustomButtonProps {
     selectedSection: string
 }
 
-const theme = useTheme()
-
 const ProfileButton = ({ selectedSection, onPress, label }: CustomButtonProps) => {
     const [isSelected, setSelected] = useState(false)
+    const [isMounted, setMounted] = useState(false)
+    const animatedValue = useRef(new Animated.Value(0)).current;
 
-    function doAnimation() {
+    const backgroundColor = animatedValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [theme.beige, theme.cocao],
+    });
+
+
+    useEffect(() => {
+        if (isMounted) return
+        if (selectedSection == label) {
+            setSelected(true)
+            Animated.timing(animatedValue, {
+                toValue: 1,
+                duration: 1,
+                useNativeDriver: false,
+            }).start();
+        }
+        setMounted(true)
+    })
+
+    useEffect(() => {
+        if (selectedSection !== label) {
+            setSelected(false)
+            Animated.timing(animatedValue, {
+                toValue: 0,
+                duration: 100,
+                useNativeDriver: false,
+            }).start();
+        }
+    }, [selectedSection])
+
+
+    function handlePress() {
         onPress()
         if (isSelected && (selectedSection == label)) return
 
+        perfomAnimation()
+        setSelected(!isSelected)
+    }
+
+    function perfomAnimation() {
         if (isSelected) {
             Animated.timing(animatedValue, {
                 toValue: 0,
@@ -32,35 +69,12 @@ const ProfileButton = ({ selectedSection, onPress, label }: CustomButtonProps) =
                 useNativeDriver: false,
             }).start();
         }
-        setSelected(!isSelected)
     }
 
-    useEffect(() => {
-        if (selectedSection !== label) {
-            setSelected(false)
-            Animated.timing(animatedValue, {
-                toValue: 0,
-                duration: 100,
-                useNativeDriver: false,
-            }).start();
-        }
-    }, [selectedSection])
-
-    function getTextCol() {
-        if (isSelected) return theme.beige
-        else return theme.cocao
-    }
-
-    const animatedValue = useRef(new Animated.Value(0)).current;
-
-    const backgroundColor = animatedValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [theme.beige, theme.cocao],
-    });
 
     return (
         <TouchableWithoutFeedback
-            onPress={doAnimation}
+            onPress={handlePress}
         >
             <Animated.View
                 style={[
@@ -72,13 +86,16 @@ const ProfileButton = ({ selectedSection, onPress, label }: CustomButtonProps) =
                     },
                 ]}
             >
-                <Animated.Text style={[styles.buttonText, { color: getTextCol() }]}>
+                <Animated.Text style={[styles.buttonText, { color: isSelected ? theme.beige : theme.cocao }]}>
                     {label}
                 </Animated.Text>
             </Animated.View>
         </TouchableWithoutFeedback>
     );
 };
+
+
+const theme = useTheme()
 
 const styles = StyleSheet.create({
     buttonField: {

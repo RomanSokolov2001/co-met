@@ -1,10 +1,6 @@
 import { StatusBar } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 
-export const loadStatusBar = (color: string) => {
-  StatusBar.setBackgroundColor(color);
-  StatusBar.setBarStyle("dark-content");
-}
 
 export function formatDateToCurrentLang(date: number | Date | undefined) {
   const locale = 'en-US';
@@ -28,3 +24,35 @@ export function pickImage(setImageUri: (arg0: string) => void) {
       }
   });
 };
+
+export const formatTimeAgo = (timestamp) => {
+  if (!timestamp) return '';
+
+  const now = new Date();
+  const date = timestamp.toDate();
+  const seconds = Math.floor((now - date) / 1000);
+
+  if (seconds < 60) return 'just now';
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+
+  return date.toLocaleDateString();
+};
+
+// Chat GPT Turbo
+export function hasCommonElements(arr1: string[], arr2: string[]): boolean {
+  const set1 = new Set(arr1);
+  for (const item of arr2) {
+      if (set1.has(item)) {
+          return true;
+      }
+  }
+  return false;
+}

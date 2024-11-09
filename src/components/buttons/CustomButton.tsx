@@ -5,13 +5,15 @@ import { useTheme } from '../../hooks/useTheme';
 
 interface CustomButtonProps {
   onPress: any,
-  children: Element,
-  type: 'light' | 'dark'
+  type: 'light' | 'dark',
+  children: any
 }
 
-const theme = useTheme()
 
 const CustomButton = ({ onPress = () => console.log("Pressed"), children, type = "light" }: CustomButtonProps) => {
+  const animatedValue = useRef(new Animated.Value(0)).current;
+
+
   function getBgInitial() {
     if (type == 'light') return theme.beige
     else return theme.cocao
@@ -27,13 +29,23 @@ const CustomButton = ({ onPress = () => console.log("Pressed"), children, type =
     else return theme.beige
   }
 
-  const animatedValue = useRef(new Animated.Value(0)).current;
+
+  const backgroundColor = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [getBgInitial(), getBgAfterTap()],
+  });
+
+  const scale = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0.95],
+  });
+
 
   const handlePressIn = () => {
     Animated.timing(animatedValue, {
       toValue: 1,
       duration: 50,
-      useNativeDriver: false, // We can't use native driver because we're animating layout properties
+      useNativeDriver: false,
     }).start();
   };
 
@@ -45,15 +57,6 @@ const CustomButton = ({ onPress = () => console.log("Pressed"), children, type =
     }).start();
   };
 
-  const backgroundColor = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [getBgInitial(), getBgAfterTap()],
-  });
-
-  const scale = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0.95],
-  });
 
   return (
     <TouchableWithoutFeedback
@@ -77,6 +80,9 @@ const CustomButton = ({ onPress = () => console.log("Pressed"), children, type =
     </TouchableWithoutFeedback>
   );
 };
+
+
+const theme = useTheme()
 
 const styles = StyleSheet.create({
   buttonField: {

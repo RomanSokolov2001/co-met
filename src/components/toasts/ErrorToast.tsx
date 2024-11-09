@@ -1,28 +1,22 @@
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import { loadStatusBar } from "../../utils/utilFunctions";
+
 import { useTheme } from "../../hooks/useTheme";
+
 
 interface ToastProps {
     setToast: any
-    errorText: SetStateAction<string | undefined>
-    colorNext: string
-    colorPrev: string
+    errorText: string
 }
 
-export default function Toast({ setToast, errorText, colorNext, colorPrev }: ToastProps) {
+export default function Toast({ setToast, errorText }: ToastProps) {
     const theme = useTheme()
     const opacity = useRef(new Animated.Value(0)).current;
     const [isMounted, setMounted] = useState(false)
 
-    useEffect(() => {
-        loadStatusBar(colorNext)
-    })
-
     function handleTap() {
         setToast(false)
-        loadStatusBar(colorPrev)
 
     }
 
@@ -40,16 +34,13 @@ export default function Toast({ setToast, errorText, colorNext, colorPrev }: Toa
                     </View>
                 </View>
             </TouchableWithoutFeedback>
-
-
-
-
         </Animated.View>
 
     )
 }
 
-const w = Dimensions.get('screen').width
+
+const SCREEN_WIDTH = Dimensions.get('window').width
 
 const styles = StyleSheet.create({
     overlay: {
@@ -68,7 +59,7 @@ const styles = StyleSheet.create({
     emptyBody: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: w,
+        width: SCREEN_WIDTH,
     },
     field: {
         width: '70%',

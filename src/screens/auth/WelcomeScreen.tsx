@@ -1,28 +1,23 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, StatusBar } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CustomButton from '../../components/buttons/CustomButton';
 import { shapes } from '../../utils/shapes';
 import { useTheme } from '../../hooks/useTheme';
-import { loadStatusBar } from '../../utils/utilFunctions';
 import { destinations } from '../../types/navigation';
 
 
-const theme = useTheme()
-
-
 export default function WelcomeScreen() {
-  const navigation:any = useNavigation()
+  const navigation: any = useNavigation()
 
-  useFocusEffect(() => {
-    loadStatusBar(theme.beige)
-  })
-
+  useFocusEffect(()=> {
+    StatusBar.setBackgroundColor("rgba(0, 0, 0, 0)")
+    StatusBar.setTranslucent(true);
+  }, )
 
   return (
-    <SafeAreaView style={styles.container} >
+    <View style={styles.container} >
 
       <View style={styles.pageTitleContainer}>
         <View style={styles.pageTitleEmptyPart}>
@@ -52,15 +47,19 @@ export default function WelcomeScreen() {
         source={shapes.rectBeigeBottom}
         style={styles.rectBeigeBottom}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
+const BAR_WIDTH = StatusBar.currentHeight
+const theme = useTheme()
+
 const styles = StyleSheet.create({
   container: {
+    paddingTop: BAR_WIDTH,
     width: '100%',
     height: '100%',
-    backgroundColor: '#EDE0D4',
+    backgroundColor: theme.beige,
     flexDirection: 'column',
     justifyContent: 'space-between'
   },
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     width: '40%'
   },
   pageTitleField: {
-    backgroundColor: '#886650',
+    backgroundColor: theme.cocao,
     width: '100%',
     padding: 10,
     justifyContent: 'center',

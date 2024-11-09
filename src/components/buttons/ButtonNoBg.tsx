@@ -1,9 +1,13 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../../hooks/useTheme";
 
-const theme = useTheme()
 
-export default function ButtonNoBg({ label, onPress }) {
+interface BtnProps {
+    label: string
+    onPress: any 
+}
+
+export default function ButtonNoBg({ label, onPress }: BtnProps) {
     return (
         <TouchableOpacity onPress={() => onPress()}>
             <View style={styles.btnField}>
@@ -14,6 +18,9 @@ export default function ButtonNoBg({ label, onPress }) {
         </TouchableOpacity>
     )
 }
+
+
+const theme = useTheme()
 
 const styles = StyleSheet.create({
     btnField: {

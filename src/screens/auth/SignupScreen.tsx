@@ -1,5 +1,5 @@
 import React, { SetStateAction, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, StatusBar } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -16,9 +16,6 @@ import { registerUser } from '../../services/AuthService';
 import { destinations } from '../../types/navigation';
 
 
-const theme = useTheme()
-
-
 export default function SignupScreen() {
     const [name, setName] = useState('')
     const [dob, setDob] = useState(new Date())
@@ -33,14 +30,7 @@ export default function SignupScreen() {
     const [serverErrorText, setServerErrorText] = useState<SetStateAction<string | undefined>>('Firebase Error: Server felt down...')
     const [showErrorToast, setShowErrorToast] = useState(false)
 
-
-    const navigation:any = useNavigation()
-
-
-    useFocusEffect(() => {
-        if (showErrorToast) return
-        loadStatusBar(theme.beige)
-    })
+    const navigation: any = useNavigation()
 
 
     const onChangeDatePicker = (
@@ -87,10 +77,8 @@ export default function SignupScreen() {
                 displayName: name,
                 dob
             });
-            console.log(result)
-
             if (result.success) {
-                navigation.navigate(destinations.postRegistration.regStepOne.name);
+                navigation.navigate(destinations.postRegistration.regStepOne.name, {email});
             } else {
                 setServerErrorText(result.error);
                 setShowErrorToast(true);
@@ -103,7 +91,7 @@ export default function SignupScreen() {
 
 
     return (
-        <SafeAreaView style={styles.container} >
+        <View style={styles.container} >
             <View style={styles.mainBody}>
 
                 <Text style={styles.title}>Let's start with the basics!</Text>
@@ -267,12 +255,13 @@ export default function SignupScreen() {
                 </View>
             </View>
             {showErrorToast &&
-                <ErrorToast setToast={setShowErrorToast} errorText={serverErrorText} colorNext={theme.beigeDarker} colorPrev={theme.beige} />
+                <ErrorToast setToast={setShowErrorToast} errorText={serverErrorText} />
             }
-        </SafeAreaView>
+        </View>
     );
 }
 
+const theme = useTheme()
 
 const styles = StyleSheet.create({
     container: {
@@ -343,5 +332,5 @@ const styles = StyleSheet.create({
         right: 46,
         bottom: 8,
         tintColor: 'green'
-    },
+    }
 })
