@@ -25,12 +25,18 @@ export function pickImage(setImageUri: (arg0: string) => void) {
   });
 };
 
-export const formatTimeAgo = (timestamp) => {
-  if (!timestamp) return '';
+export const formatTimeAgo = (dateInput: Date | string | number): string => {
+  if (!dateInput) return '';
 
   const now = new Date();
-  const date = timestamp.toDate();
-  const seconds = Math.floor((now - date) / 1000);
+  
+  // Convert the input into a Date object, if it's a string or number (timestamp)
+  const date = new Date(dateInput);
+  
+  // If the date is invalid, return an empty string
+  if (isNaN(date.getTime())) return '';
+
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (seconds < 60) return 'just now';
 
@@ -45,6 +51,8 @@ export const formatTimeAgo = (timestamp) => {
 
   return date.toLocaleDateString();
 };
+
+
 
 // Chat GPT Turbo
 export function hasCommonElements(arr1: string[], arr2: string[]): boolean {
