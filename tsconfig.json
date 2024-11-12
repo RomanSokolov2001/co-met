@@ -1,3 +1,18 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    // Add any custom TypeScript options here
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    // More options as needed
+  },
+  "include": [
+    "src",
+    "__tests__"  // Include your test files or other directories if needed
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
