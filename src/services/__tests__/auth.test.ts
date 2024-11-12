@@ -1,4 +1,3 @@
-// src/services/__tests__/auth.test.ts
 import {
     registerUser,
     loginUser,
@@ -7,7 +6,6 @@ import {
     subscribeToAuthChanges
   } from '../AuthService';
   
-  // Mocking Firebase functions
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from 'firebase/auth';
   import { doc, setDoc } from '@firebase/firestore';
   
@@ -20,7 +18,7 @@ import {
   }));
   
   jest.mock('@firebase/firestore', () => ({
-    doc: jest.fn(() => ({ path: 'users/123' })),  // Mock returning a non-empty reference
+    doc: jest.fn(() => ({ path: 'users/123' })),
     setDoc: jest.fn(),
   }));
   
@@ -48,7 +46,7 @@ import {
         expect.objectContaining({
           email: 'test@example.com',
           displayName: 'Test User',
-          dob: '1990-01-01T00:00:00.000Z'  // If checking specific DOB
+          dob: '1990-01-01T00:00:00.000Z'
         })
       );
       
